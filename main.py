@@ -1,4 +1,4 @@
 class DDD:
-    def __init__(self, codigo, city):
+    def __init__(self, codigo, cidade):
         self.codigo = codigo
-        self.city = city
+        self.cidade = cidade
