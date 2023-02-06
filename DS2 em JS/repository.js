@@ -1,4 +1,4 @@
-const codigos = new Map([
+const cidades = new Map([
     [11, "são paulo"],
     [19, "campinas"],
     [21, "rio de janeiro"],
