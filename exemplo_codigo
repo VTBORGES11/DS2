@@ -1,4 +1,5 @@
-# Camada de Entidades
+# Camada de Entidades: responsável por armazenar as entidades do sistema, que representam conceitos de negócio. Nesse caso, a entidade é a classe User, que contém as informações do usuário.
+
 class User:
     def __init__(self, id: int, name: str, email: str, password: str):
         self.id = id
@@ -6,7 +7,8 @@ class User:
         self.email = email
         self.password = password
 
-# Camada de Casos de Uso
+# Camada de Casos de Uso: responsável por implementar as regras de negócio do sistema, definindo o que pode ser feito com as entidades. Nesse caso, o caso de uso é a classe CreateUserUseCase, que recebe informações do usuário, cria um novo usuário e o armazena por meio do repositório.
+
 class CreateUserUseCase:
     def __init__(self, user_repository):
         self.user_repository = user_repository
@@ -17,7 +19,8 @@ class CreateUserUseCase:
         self.user_repository.create(user)
         return user
 
-# Camada de Adaptadores
+# Camada de Adaptadores: responsável por implementar as interfaces que permitem que as classes da camada de Casos de Uso possam se comunicar com outras camadas, como a camada de Frameworks e Drivers. Nesse caso, o adaptador é a classe UserRepository, que contém a implementação para acessar o banco de dados.
+
 class UserRepository:
     def __init__(self, db_connection):
         self.db_connection = db_connection
@@ -28,7 +31,8 @@ class UserRepository:
     def create(self, user: User) -> None:
         # implementação da lógica para criar um usuário no banco de dados
 
-# Camada de Frameworks e Drivers
+# Camada de Frameworks e Drivers: responsável por interagir com o mundo externo ao sistema, como as interfaces com o usuário e outras aplicações. Nesse caso, a classe DjangoUserController é um adaptador para a framework Django, e é responsável por receber as informações do usuário por meio do request, chamar o caso de uso CreateUserUseCase para criar um novo usuário e renderizar a resposta para o usuário.
+
 class DjangoUserController:
     def __init__(self, create_user_use_case):
         self.create_user_use_case = create_user_use_case
