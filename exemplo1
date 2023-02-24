@@ -1,104 +1,41 @@
 # Camada de Entidades
-
-class Produto:
-    def _init_(self, nome, preco):
-        self.nome = nome
-        self.preco = preco
-
-class Pedido:
-    def _init_(self, produtos):
-        self.produtos = produtos
-        self.total = sum([p.preco for p in self.produtos])
-    
-    def adicionar_produto(self, produto):
-        self.produtos.append(produto)
-        self.total += produto.preco
-    
-    def remover_produto(self, produto):
-        if produto in self.produtos:
-            self.produtos.remove(produto)
-            self.total -= produto.preco
-
+class User:
+    def __init__(self, id: int, name: str, email: str, password: str):
+        self.id = id
+        self.name = name
+        self.email = email
+        self.password = password
 
 # Camada de Casos de Uso
+class CreateUserUseCase:
+    def __init__(self, user_repository):
+        self.user_repository = user_repository
 
-class RealizarPedido:
-    def _init_(self, pedido_repo):
-        self.pedido_repo = pedido_repo
-    
-    def executar(self, produtos):
-        pedido = Pedido(produtos)
-        self.pedido_repo.adicionar_pedido(pedido)
-        return pedido
-    
-class ListarPedidos:
-    def _init_(self, pedido_repo):
-        self.pedido_repo = pedido_repo
-    
-    def executar(self):
-        return self.pedido_repo.listar_pedidos()
-
-class RemoverPedido:
-    def _init_(self, pedido_repo):
-        self.pedido_repo = pedido_repo
-    
-    def executar(self, pedido_id):
-        pedido = self.pedido_repo.buscar_pedido(pedido_id)
-        if not pedido:
-            return False
-        self.pedido_repo.remover_pedido(pedido)
-        return True
-
+    def execute(self, name: str, email: str, password: str) -> User:
+        user_id = self.user_repository.get_next_id()
+        user = User(user_id, name, email, password)
+        self.user_repository.create(user)
+        return user
 
 # Camada de Adaptadores
+class UserRepository:
+    def __init__(self, db_connection):
+        self.db_connection = db_connection
 
-import random
+    def get_next_id(self) -> int:
+        # implementação da lógica para obter o próximo ID
 
-class PedidoRepo:
-    def _init_(self):
-        self.pedidos = []
-    
-    def adicionar_pedido(self, pedido):
-        pedido.id = random.randint(1, 1000)
-        self.pedidos.append(pedido)
-    
-    def listar_pedidos(self):
-        return self.pedidos
-    
-    def buscar_pedido(self, pedido_id):
-        for pedido in self.pedidos:
-            if pedido_id == pedido.id:
-                return pedido
-        return None
-    
-    def remover_pedido(self, pedido):
-        self.pedidos.remove(pedido)
+    def create(self, user: User) -> None:
+        # implementação da lógica para criar um usuário no banco de dados
 
-pedido_repo = PedidoRepo()
+# Camada de Frameworks e Drivers
+class DjangoUserController:
+    def __init__(self, create_user_use_case):
+        self.create_user_use_case = create_user_use_case
 
-# Testando a aplicação
-
-realizar_pedido = RealizarPedido(pedido_repo)
-listar_pedidos = ListarPedidos(pedido_repo)
-remover_pedido = RemoverPedido(pedido_repo)
-
-# Realizar um pedido
-produtos = [Produto("Camiseta", 50), Produto("Calça", 100), Produto("Sapato", 150)]
-pedido = realizar_pedido.executar(produtos)
-print(f"Pedido realizado com sucesso! ID do pedido: {pedido.id}")
-
-# Listar todos os pedidos
-print("Lista de todos os pedidos:")
-for pedido in listar_pedidos.executar():
-    print(pedido.produtos, pedido.total)
-
-# Remover um pedido
-pedido_id = pedido.id
-resultado = remover_pedido.executar(pedido_id)
-if resultado:
-    print(f"Pedido com ID {pedido_id} removido com sucesso!")
-else:
-    print(f"Não foi possível remover o pedido com ID {pedido_id}")
-Neste exemplo, temos as entidades Produto e Pedido, a camada de casos de uso com RealizarPedido, ListarPedidos e RemoverPedido, e a camada de adaptadores com PedidoRepo que usa uma lista para armazenar os pedidos em memória.
-
-A regra de dependência é mantida, pois a camada de adaptadores depende das entidades, mas as entidades e as camadas de uso
+    def create_user(self, request):
+        name = request.POST['name']
+        email = request.POST['email']
+        password = request.POST['password']
+        user = self.create_user_use_case.execute(name, email, password)
+        # renderização da resposta para o usuário
