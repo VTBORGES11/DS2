@@ -1,0 +1,22 @@
+import math
+class Quadrado:
+    
+    def __init__(self, lado):
+        self.lado = lado
+    def area(self):
+        return self.lado ** 2
+    
+class LadoParaRaio:
+    def __init__(self, quadrado):
+        self.raio = quadrado.lado
+    def area(self):
+        return math.pi * (self.raio ** 2)
+    
+def calcular_area(forma):
+    return forma.area()
+
+quadrado = Quadrado(10)
+circulo = LadoParaRaio(quadrado)
+
+print(calcular_area(quadrado))
+print(calcular_area(circulo))
