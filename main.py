@@ -1,4 +1,9 @@
-class DDD:
-    def __init__(self, codigo, cidade) -> None:
-        self.codigo = codigo
-        self.cidade = cidade
+from LadoParaCirculo import LadoParaRaio, calcular_area
+from quadrado import Quadrado
+
+
+quadrado = Quadrado(10)
+circulo = LadoParaRaio(quadrado)
+
+print(calcular_area(quadrado))
+print(calcular_area(circulo))
